@@ -1,5 +1,7 @@
 # provider-rule
 
+This module provides powerful initialization for test class.
+
 # Installation
 
 add repository and dependency.
