@@ -8,13 +8,13 @@ also see [jitpack](https://jitpack.io/#Wreulicke/provider-rule/0.0.2).
 * Example for gradle
 
 ```groovy
-    repositories {
-		maven { url 'https://jitpack.io' }
-    }
+  repositories {
+    maven { url 'https://jitpack.io' }
+  }
 
-	dependencies {
-            compile 'com.github.Wreulicke:provider-rule:0.0.2'
-	}
+  dependencies {
+    compile 'com.github.Wreulicke:provider-rule:0.0.2'
+  }
 ```
 
 # Usage
