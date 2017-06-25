@@ -12,6 +12,7 @@ dependencies {
 	api group: 'org.springframework', name: 'spring-context', version: '4.3.9.RELEASE'
 	api group: 'org.springframework', name: 'spring-test', version: '4.3.9.RELEASE'
 	api group: 'org.springframework', name: 'spring-beans', version: '4.3.9.RELEASE'
+    implementation 'junit:junit:4.12'
 
     testImplementation 'junit:junit:4.12'
     
