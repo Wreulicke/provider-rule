@@ -6,6 +6,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.wreulicke.test.context.provider.FieldNameProvider;
+import com.github.wreulicke.test.context.provider.NameAnnotationProvider;
+import com.github.wreulicke.test.context.provider.NameAnnotationProvider.Name;
 import com.github.wreulicke.test.context.provider.ProvidedBy;
 import com.github.wreulicke.test.context.provider.SynthesizedProvider;
 
@@ -19,6 +21,10 @@ public class ProvideRuleTest {
 	@SynthesizedProvider
 	String field2;
 	
+	@ProvidedBy(NameAnnotationProvider.class)
+	@Name("test")
+	String test;
+	
 	
 	@Test
 	public void test() {
@@ -29,4 +35,10 @@ public class ProvideRuleTest {
 	public void testWithSynthesizedCase() {
 		assertThat(field2).isEqualTo("field2");
 	}
+	
+	@Test
+	public void testWithNamedAnnotationCase() {
+		assertThat(test).isEqualTo("test");
+	}
+	
 }
