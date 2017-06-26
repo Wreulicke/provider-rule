@@ -1,26 +1,20 @@
-package com.github.wreulicke.test.context.provider.spring;
+package com.github.wreulicke.test.context.provider;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.test.context.TestContext;
-
-import com.github.wreulicke.test.context.provider.ProvidedBy;
-import com.github.wreulicke.test.context.provider.Provider;
 
 public class Preparator {
-	private TestContext testContext;
 	
-	private AutowireCapableBeanFactory beanFactory;
+	private PostProcessor postProcessor;
 	
 	
-	public Preparator(TestContext context) {
-		testContext = context;
-		beanFactory = testContext.getApplicationContext().getAutowireCapableBeanFactory();
+	public Preparator(PostProcessor processor) {
+		postProcessor = processor;
 	}
 	
 	public void prepare(Object instance) {
@@ -39,6 +33,10 @@ public class Preparator {
 			throws Exception {
 		if (clazz == Object.class)
 			return;
+		
+		@SuppressWarnings("rawtypes")
+		Map<Class, ProviderProducer> cache = new HashMap<>();
+		
 		Field[] fields = clazz.getDeclaredFields();
 		for (Field field : fields) {
 			if (Modifier.isStatic(field.getModifiers())) {
@@ -47,10 +45,9 @@ public class Preparator {
 			ProvidedBy provided = AnnotationUtils.findAnnotation(field, ProvidedBy.class);
 			if (provided != null) {
 				Class<? extends Provider> providerClazz = provided.value();
-				Constructor<? extends Provider> ctor = providerClazz.getConstructor();
-				Provider provider = ctor.newInstance();
-				beanFactory.autowireBeanProperties(provider, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
-				beanFactory.initializeBean(provider, providerClazz.getName());
+				ProviderProducer producer = cache.computeIfAbsent(providerClazz, ProviderProducer::of);
+				Provider provider = producer.get(field);
+				postProcessor.process(producer, providerClazz);
 				provider.visitField(instance, field);
 			}
 		}
@@ -63,10 +60,9 @@ public class Preparator {
 			ProvidedBy provided = AnnotationUtils.findAnnotation(method, ProvidedBy.class);
 			if (provided != null) {
 				Class<? extends Provider> providerClazz = provided.value();
-				Constructor<? extends Provider> ctor = providerClazz.getConstructor();
-				Provider provider = ctor.newInstance();
-				beanFactory.autowireBeanProperties(provider, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
-				beanFactory.initializeBean(provider, providerClazz.getName());
+				ProviderProducer producer = cache.computeIfAbsent(providerClazz, ProviderProducer::of);
+				Provider provider = producer.get(method);
+				postProcessor.process(producer, providerClazz);
 				provider.visitMethod(instance, method);
 			}
 		}
