@@ -31,7 +31,7 @@ public class NameAnnotationProvider extends AbstractTypedProvider<Name> {
 	
 	@Override
 	public void visitMethod(Object instance, Method method) throws Exception {
-		// nop
+		throw new AssertionError();
 	}
 	
 	@Override

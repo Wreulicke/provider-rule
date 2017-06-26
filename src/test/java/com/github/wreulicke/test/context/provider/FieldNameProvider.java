@@ -6,8 +6,6 @@ import java.lang.reflect.Method;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import com.github.wreulicke.test.context.provider.Provider;
-
 public class FieldNameProvider implements Provider {
 	@Autowired
 	ApplicationContext context;
@@ -15,6 +13,7 @@ public class FieldNameProvider implements Provider {
 	
 	@Override
 	public void visitMethod(Object instance, Method method) throws Exception {
+		throw new AssertionError();
 	}
 	
 	@Override
