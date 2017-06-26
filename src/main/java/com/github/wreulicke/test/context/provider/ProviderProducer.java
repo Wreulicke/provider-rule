@@ -4,8 +4,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.function.Function;
 
 import org.springframework.core.annotation.AnnotationUtils;
@@ -19,32 +17,30 @@ public class ProviderProducer {
 	}
 	
 	public static ProviderProducer of(Class<Provider> provider) {
-		if (TypedProvider.class.isAssignableFrom(provider)) {
-			Type[] types = provider.getGenericInterfaces();
-			Class clazz = Arrays.stream(types)
-				.filter((t) -> t instanceof ParameterizedType)
-				.map(ParameterizedType.class::cast)
-				.map((t) -> {
-					return (Class) t.getActualTypeArguments()[0];
-				})
-				.filter((param) -> {
-					return !Annotation.class.equals(param) && Annotation.class.isAssignableFrom(param);
-				}).findFirst().orElseThrow(AssertionError::new); // TODO more information
-			return new ProviderProducer((e) -> {
-				Annotation annotation = AnnotationUtils.findAnnotation(e, clazz);
-				if (annotation != null) {
-					Constructor<Provider> ctor = provider.getConstructor(clazz);
-					return ctor.newInstance(annotation);
-				}
+		if (AbstractTypedProvider.class.isAssignableFrom(provider)) {
+			ParameterizedType type = (ParameterizedType) provider.getGenericSuperclass();
+			@SuppressWarnings("rawtypes")
+			Class param = (Class) type.getActualTypeArguments()[0];
+			if (Annotation.class.equals(param) || Annotation.class.isAssignableFrom(param) == false)
 				throw new AssertionError();
-			});
-		} else {
 			try {
-				Constructor<Provider> ctor = provider.getConstructor();
-				return new ProviderProducer((e) -> ctor.newInstance());
-			} catch (Exception e) {
+				Constructor<Provider> ctor = provider.getConstructor(param);
+				return new ProviderProducer((e) -> {
+					Annotation annotation = AnnotationUtils.findAnnotation(e, param);
+					if (annotation != null) {
+						return ctor.newInstance(annotation);
+					}
+					throw new AssertionError();
+				});
+			} catch (ReflectiveOperationException e) {
 				throw new AssertionError();
 			}
+		}
+		try {
+			Constructor<Provider> ctor = provider.getConstructor();
+			return new ProviderProducer((e) -> ctor.newInstance());
+		} catch (Exception e) {
+			throw new AssertionError();
 		}
 	}
 	
