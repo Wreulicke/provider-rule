@@ -47,7 +47,7 @@ public class Preparator {
 				Class<? extends Provider> providerClazz = provided.value();
 				ProviderProducer producer = cache.computeIfAbsent(providerClazz, ProviderProducer::of);
 				Provider provider = producer.get(field);
-				postProcessor.process(producer, providerClazz);
+				postProcessor.process(provider, providerClazz);
 				provider.visitField(instance, field);
 			}
 		}
@@ -62,7 +62,7 @@ public class Preparator {
 				Class<? extends Provider> providerClazz = provided.value();
 				ProviderProducer producer = cache.computeIfAbsent(providerClazz, ProviderProducer::of);
 				Provider provider = producer.get(method);
-				postProcessor.process(producer, providerClazz);
+				postProcessor.process(provider, providerClazz);
 				provider.visitMethod(instance, method);
 			}
 		}
