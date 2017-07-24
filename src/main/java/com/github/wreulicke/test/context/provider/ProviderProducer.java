@@ -16,7 +16,7 @@ public class ProviderProducer {
 		this.provider = provider;
 	}
 	
-	public static ProviderProducer of(Class<Provider> provider) {
+	public static ProviderProducer of(Class<? extends Provider> provider) {
 		if (AbstractTypedProvider.class.isAssignableFrom(provider)) {
 			ParameterizedType type = (ParameterizedType) provider.getGenericSuperclass();
 			@SuppressWarnings("rawtypes")
@@ -24,7 +24,7 @@ public class ProviderProducer {
 			if (Annotation.class.equals(param) || Annotation.class.isAssignableFrom(param) == false)
 				throw new AssertionError();
 			try {
-				Constructor<Provider> ctor = provider.getConstructor(param);
+				Constructor<? extends Provider> ctor = provider.getConstructor(param);
 				return new ProviderProducer((e) -> {
 					Annotation annotation = AnnotationUtils.findAnnotation(e, param);
 					if (annotation != null) {
@@ -37,7 +37,7 @@ public class ProviderProducer {
 			}
 		}
 		try {
-			Constructor<Provider> ctor = provider.getConstructor();
+			Constructor<? extends Provider> ctor = provider.getConstructor();
 			return new ProviderProducer((e) -> ctor.newInstance());
 		} catch (Exception e) {
 			throw new AssertionError();

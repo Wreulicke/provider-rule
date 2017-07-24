@@ -34,8 +34,7 @@ public class Preparator {
 		if (clazz == Object.class)
 			return;
 		
-		@SuppressWarnings("rawtypes")
-		Map<Class, ProviderProducer> cache = new HashMap<>();
+		Map<Class<? extends Provider>, ProviderProducer> cache = new HashMap<>();
 		
 		Field[] fields = clazz.getDeclaredFields();
 		for (Field field : fields) {
