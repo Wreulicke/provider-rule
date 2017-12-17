@@ -7,10 +7,11 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({
-	ElementType.FIELD,
-	ElementType.TYPE,
-	ElementType.METHOD
+        ElementType.FIELD,
+        ElementType.TYPE,
+        ElementType.METHOD,
+        ElementType.PARAMETER
 })
 public @interface ProvidedBy {
-	Class<? extends Provider> value();
+    Class<? extends Provider> value();
 }
