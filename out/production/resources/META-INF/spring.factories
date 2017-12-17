@@ -1,2 +1,0 @@
-org.springframework.test.context.TestExecutionListener=\
-com.github.wreulicke.test.context.provider.spring.ProvideListener
