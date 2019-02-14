@@ -24,6 +24,6 @@ dependencies {
   testImplementation "org.junit.platform:junit-platform-launcher:$junitPlatfromVersion" // for IDE
   
   testImplementation "org.assertj:assertj-core:3.11.1"
-  testImplementation 'com.github.stefanbirkner:system-rules:1.18.0'
+  testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
 }
 
